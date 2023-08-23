@@ -13,5 +13,7 @@ export const localStorageMock = (function() {
     removeItem: function(key) {
       delete store[key]
     }
+    
   }
+  
 })()

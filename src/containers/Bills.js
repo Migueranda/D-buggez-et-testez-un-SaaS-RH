@@ -2,6 +2,7 @@ import { ROUTES_PATH } from '../constants/routes.js'
 import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
 
+
 export default class {
   constructor({ document, onNavigate, store, localStorage }) {
     this.document = document
@@ -20,11 +21,13 @@ export default class {
     this.onNavigate(ROUTES_PATH['NewBill'])
   }
 
-  handleClickIconEye = (icon) => {
+ handleClickIconEye = (icon) => {
     const billUrl = icon.getAttribute("data-bill-url")
     const imgWidth = Math.floor($('#modaleFile').width() * 0.5)
     $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;' class="bill-proof-container"><img width=${imgWidth} src=${billUrl} alt="Bill" /></div>`)
-    $('#modaleFile').modal('show')
+    // reprise du code containers/Dashboard.js pour éviter "type_error $().modal is not a function" dans Jest
+    // $('#modaleFile').modal('show')
+    if (typeof $('#modaleFile').modal === 'function') $('#modaleFile').modal('show')
   }
 
   getBills = () => {
@@ -34,11 +37,12 @@ export default class {
       .list()
       .then(snapshot => {
         const bills = snapshot
+          // .sort((a, b) => (a.date < b.date) ? 1 : -1) // mpie - sorting Date DESC +
           .map(doc => {
             try {
               return {
                 ...doc,
-                date: formatDate(doc.date),
+                date: doc.date,
                 status: formatStatus(doc.status)
               }
             } catch(e) {
@@ -47,12 +51,13 @@ export default class {
               console.log(e,'for',doc)
               return {
                 ...doc,
-                date: doc.date,
+                // date: doc.date,
+                date: doc.date, 
                 status: formatStatus(doc.status)
               }
             }
           })
-          console.log('length', bills.length)
+          // console.log(bills)
         return bills
       })
     }

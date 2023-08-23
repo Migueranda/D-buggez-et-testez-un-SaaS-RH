@@ -131,6 +131,7 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
+    
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
@@ -146,7 +147,10 @@ export default class {
     }
 
     bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      // MPIE - 20230802 - bug Dashboard - start
+      // $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      $(`#status-bills-container${index} > #open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      // MPIE - 20230802 - bug Dashboard - stop
     })
 
     return bills

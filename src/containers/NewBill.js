@@ -15,9 +15,22 @@ export default class NewBill {
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
   }
+  
   handleChangeFile = e => {
     e.preventDefault()
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    const fileField = this.document.querySelector(`input[data-testid="file"]`)
+    // MPIE - 20230801 - [ bug hunt ] bills - start
+    const allowedExtention = ["image/jpeg", "image/png"]
+    if(!allowedExtention.includes(file.type)){
+      fileField.value = '' // reset field input
+      /* istanbul ignore next */
+      if (typeof jest === 'undefined'){
+        alert(`Extension du fichier [ ${file.type} ] non prise en compte`)
+      }
+      return false
+    }
+    // MPIE - 20230801 - [ bug hunt ] bills - stop
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     const formData = new FormData()
@@ -39,7 +52,9 @@ export default class NewBill {
         this.fileUrl = fileUrl
         this.fileName = fileName
       }).catch(error => console.error(error))
+   return true
   }
+
   handleSubmit = e => {
     e.preventDefault()
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
@@ -62,6 +77,7 @@ export default class NewBill {
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       this.store
